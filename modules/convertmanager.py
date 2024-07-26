@@ -43,8 +43,10 @@ class ConvertManager:
 
     # Don't use blur! Blur will kill Raspberry Pi Zero.
     # Resizing to huge and then scaling to small will add some blur, and it's 10x faster than blur operation.
+    # Mod: added blur but paired with the down/up scaling which is a little slower but still much faster than
+    # blur on full size image. 
     __PHOTO_BACK_CODE = (
-        "( -clone 0 -gravity center -sample x{} -scale {}% -resize {}x{}^ -crop {}x+0+0 +repage ) ( "
+        "( -clone 0 -gravity center -sample x{} -scale {}% -resize 50% -resize {}x{}^ -crop {}x+0+0 +repage ) ( "
         "-clone 0 -sample {}x{} ) -delete 0 -gravity center -compose over -composite "
     )
     __PHOTO_RESIZE_CODE = "-sample {}x{} "
@@ -172,7 +174,7 @@ class ConvertManager:
             # this takes more time to progress
             aspect_ratio = int(original_width) / int(original_height)
             new_height = max(int(width / aspect_ratio), height)
-            scale = round(aspect_ratio * 10.0, 2)
+            scale = round(aspect_ratio * 28.125, 2)
             code = self.__PHOTO_BACK_CODE.format(
                 new_height, scale, width, new_height, width, width, height
             )
